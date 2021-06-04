@@ -13,9 +13,9 @@ jobs:
         uses: actions/checkout@v2
 
       # installs the node software package on the runner, giving you access to the npm command
-      # - uses: actions/setup-node@v1
-      # - run: npm install -g bats
-      # - run: bats -v
+      - uses: actions/setup-node@v1
+      - run: npm install
+      - run: npm run build
 
       # - run: echo "💡 ${{ github.repository }} repo has been cloned to runner."
       # - run: echo "🖥️ workflow is now ready to test code on runner."
