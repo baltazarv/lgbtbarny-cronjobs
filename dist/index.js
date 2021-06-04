@@ -53744,7 +53744,7 @@ const updateContacts = async () => {
 
   // go thru every email
   emailsTable.select({
-    maxRecords: 300,
+    maxRecords: 100,
     // filterByFormula: `SEARCH(RECORD_ID(), "recMvnDMiY3a4dfBi")`,
     // filterByFormula: `SEARCH(RECORD_ID(), "recOcgZwaaKnkan8x,recvSCl4IpLMw3rOr")`,
   })
@@ -53760,8 +53760,6 @@ const updateContacts = async () => {
           const userRecs = await membersTable.select({
             filterByFormula: `SEARCH("${email}", ARRAYJOIN(${dbFields.members.emails}))`,
           }).firstPage();
-
-          console.log('userRecs', userRecs);
 
           let contactFields = null;
 
@@ -53854,7 +53852,7 @@ const updateContacts = async () => {
                 // UPDATE CONTACT
                 // await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
-                console.log('Updated #', countCreatedRecs, email, contactFields);
+                console.log('Updated #', countUpdatedRecs, email, contactFields);
               } catch (err) {
                 console.log('updateContact error', err);
               }
