@@ -2,16 +2,16 @@ name: 'Update Contacts'
 description: 'Update Sendinblue contacts with member updates'
 author: 'Baltazar Villegas'
 
-inputs:
-  AIRTABLE_API_KEY
-    description: 'Airtable main key'
-    required: true
-  AIRTABLE_MEMBERS_BASE_ID
-    description: 'Airtable members table'
-    required: true
-  SIB_API_KEY
-    description: 'Sendinblue key'
-    required: true
+# inputs:
+#   AIRTABLE_API_KEY
+#     description: 'Airtable main key'
+#     required: true
+#   AIRTABLE_MEMBERS_BASE_ID
+#     description: 'Airtable members table'
+#     required: true
+#   SIB_API_KEY
+#     description: 'Sendinblue key'
+#     required: true
 
 runs:
   using: 'node12'
