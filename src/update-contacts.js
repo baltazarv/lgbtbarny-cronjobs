@@ -28,8 +28,7 @@ const updateContacts = async () => {
 
   // go thru every email
   emailsTable.select({
-    maxRecords: 100,
-    // filterByFormula: `SEARCH(RECORD_ID(), "recMvnDMiY3a4dfBi")`,
+    // maxRecords: 100,
     // filterByFormula: `SEARCH(RECORD_ID(), "recOcgZwaaKnkan8x,recvSCl4IpLMw3rOr")`,
   })
     .eachPage(
@@ -134,7 +133,7 @@ const updateContacts = async () => {
                 const updateContact = getSibObject('update', contactFields);
 
                 // UPDATE CONTACT
-                // await contactsApi.updateContact(email, updateContact); // nothing returned
+                await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
                 console.log('Updated #', countUpdatedRecs, email, contactFields);
               } catch (err) {
@@ -158,7 +157,7 @@ const updateContacts = async () => {
                 const createContact = getSibObject('create', contactFields);
 
                 // CREATE CONTACT
-                // await contactsApi.createContact(createContact);
+                await contactsApi.createContact(createContact);
                 countCreatedRecs++;
                 console.log('Created #', countCreatedRecs, email, contactFields);
               } catch (err) {
