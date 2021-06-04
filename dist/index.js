@@ -53512,8 +53512,7 @@ const dbFields = constants.dbFields;
 
 const updateContacts = async () => {
   console.log('Hello contacts!');
-  console.log('env var', process.env.TEST);
-  console.log('env var prod', process.env.production.TEST);
+  console.log('at env var', process.env.AIRTABLE_API_KEY);
 
   try {
     const groups = await getGroups();
