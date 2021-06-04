@@ -1,4 +1,4 @@
-name: Test
+name: Update Contacts
 
 on: [push]
 
@@ -6,17 +6,16 @@ jobs:
   update-contacts:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 Job triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 Branch name is ${{ github.ref }} and repo is ${{ github.repository }}."
+      # - run: echo "🎉 Job triggered by a ${{ github.event_name }} event."
+      # - run: echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"
+      # - run: echo "🔎 Branch name is ${{ github.ref }} and repo is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v2
-      - run: echo "💡 ${{ github.repository }} repo has been cloned to runner."
-      - run: echo "🖥️ workflow is now ready to test code on runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      # - run: echo "💡 ${{ github.repository }} repo has been cloned to runner."
+      # - run: echo "🖥️ workflow is now ready to test code on runner."
+      # - name: List files in the repository
+      #   run: |
+      #     ls ${{ github.workspace }}
       - uses: ./
         with:
           AIRTABLE_API_KEY: ${{secrets.AIRTABLE_API_KEY}}
