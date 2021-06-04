@@ -17,10 +17,14 @@ const dbFields = constants.dbFields;
 const updateContacts = async () => {
   console.log('Hello contacts!');
   console.log('env var', process.env.TEST);
-  console.log('logging env vars above?');
+  console.log('env var prod', process.env.production.TEST);
 
-  const groups = await getGroups();
-  console.log('GROUPS', groups);
+  try {
+    const groups = await getGroups();
+    console.log('GROUPS', groups);
+  } catch (error) {
+    console.log('ERROR', error);
+  }
 
   let contactsApi = new sibContactsApi();
 }
