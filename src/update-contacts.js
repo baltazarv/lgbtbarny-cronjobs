@@ -8,7 +8,8 @@ const sibLists = constants.sibLists;
 const dbFields = constants.dbFields;
 
 const updateContacts = async () => {
-  console.log('Hello contacts!')
+  console.log('Hello contacts!');
+  console.log('env var', process.env.TEST)
 }
 
 updateContacts();

@@ -9,15 +9,24 @@ jobs:
       # - run: echo "🎉 Job triggered by a ${{ github.event_name }} event."
       # - run: echo "🐧 Running on ${{ runner.os }} server hosted by GitHub!"
       # - run: echo "🔎 Branch name is ${{ github.ref }} and repo is ${{ github.repository }}."
-      - name: Check out repository code
+      - name: Check out repo...
         uses: actions/checkout@v2
+
+      # installs the node software package on the runner, giving you access to the npm command
+      # - uses: actions/setup-node@v1
+      # - run: npm install -g bats
+      # - run: bats -v
+
       # - run: echo "💡 ${{ github.repository }} repo has been cloned to runner."
       # - run: echo "🖥️ workflow is now ready to test code on runner."
       # - name: List files in the repository
       #   run: |
       #     ls ${{ github.workspace }}
-      - uses: ./
-        with:
-          AIRTABLE_API_KEY: ${{secrets.AIRTABLE_API_KEY}}
-          AIRTABLE_MEMBERS_BASE_ID: ${{secrets.AIRTABLE_MEMBERS_BASE_ID}}
-          SIB_API_KEY: ${{secrets.SIB_API_KEY}}
+
+      - name: Run script...
+        env:
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          AIRTABLE_MEMBERS_BASE_ID: ${{ secrets.AIRTABLE_MEMBERS_BASE_ID }}
+          SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
+          TEST: ${{ secrets.TEST }}
+        uses: ./
