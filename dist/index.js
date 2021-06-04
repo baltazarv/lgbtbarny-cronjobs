@@ -5693,6 +5693,14 @@ const dbFields = {
   
 }
 
+/***/ }),
+
+/***/ 971:
+/***/ ((module) => {
+
+module.exports = eval("require")("./libs/sendinblue");
+
+
 /***/ })
 
 /******/ 	});
@@ -5746,9 +5754,11 @@ const dbFields = {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+const sibUtils = __nccwpck_require__(971);
 const constants = __nccwpck_require__(360);
 const moment = __nccwpck_require__(118);
 
+const sibContactsApi = sibUtils.sibContactsApi;
 // constants
 const sibFields = constants.sibFields;
 const sibLists = constants.sibLists;
@@ -5756,7 +5766,11 @@ const sibLists = constants.sibLists;
 const dbFields = constants.dbFields;
 
 const updateContacts = async () => {
-  console.log('Hello contacts!')
+  console.log('Hello contacts!');
+  console.log('env var', process.env.TEST);
+  console.log('logging env vars above?');
+
+  let contactsApi = new sibContactsApi();
 }
 
 updateContacts();
