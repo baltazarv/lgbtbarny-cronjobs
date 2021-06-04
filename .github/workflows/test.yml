@@ -8,3 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        with:
+          AIRTABLE_API_KEY: ${{secrets.AIRTABLE_API_KEY}}
+          AIRTABLE_MEMBERS_BASE_ID: ${{secrets.AIRTABLE_MEMBERS_BASE_ID}}
+          SIB_API_KEY: ${{secrets.SIB_API_KEY}}
