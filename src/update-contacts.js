@@ -176,7 +176,9 @@ const updateContacts = async () => {
         console.log('Total records:', totalRecords);
         console.log('Updated records:', countUpdatedRecs);
         console.log('Created records:', countCreatedRecs);
-        console.log('Start:', timeDateStarted, ': End', moment(), ': Diff', timeDateStarted.diff(moment(), 'minutes'));
+        // time stats
+        const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
+        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
       }
     )
 }
