@@ -1,4 +1,4 @@
-const sibUtils = require('./libs/sendinblue');
+const sibUtils = require('../libs/sendinblue');
 const constants = require('./constants');
 const moment = require('moment');
 
