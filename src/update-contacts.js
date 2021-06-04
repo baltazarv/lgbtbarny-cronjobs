@@ -19,8 +19,12 @@ const updateContacts = async () => {
   console.log('env var', process.env.TEST);
   console.log('logging env vars above?');
 
-  const groups = await getGroups();
-  console.log('GROUPS', groups);
+  try {
+    const groups = await getGroups();
+    console.log('GROUPS', groups);
+  } catch (error) {
+    console.log('ERROR', error);
+  }
 
   let contactsApi = new sibContactsApi();
 }
