@@ -1,7 +1,7 @@
 name: Update Contacts
 
 # on: [push]
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   update-contacts:

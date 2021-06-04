@@ -53604,10 +53604,12 @@ const updateContacts = async () => {
             filterByFormula: `SEARCH("${email}", ARRAYJOIN(${dbFields.members.emails}))`,
           }).firstPage();
 
+          console.log('userRecs', userRecs);
+
           let contactFields = null;
 
           // there should only be one user, but if more will only get first record
-          if (userRecs?.length > 0) {
+          if (userRecs && userRecs.length > 0) {
             const user = getMinifiedRecord(userRecs[0]);
             contactFields = {};
             contactFields.attributes = contactFields.attributes || {};
