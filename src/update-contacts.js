@@ -16,7 +16,7 @@ const membersTable = airtableUtils.membersTable;
 const getMinifiedRecord = airtableUtils.getMinifiedRecord;
 const getGroups = airtableUtils.getGroups;
 // constants
-const dbFields = require('./constants/sendinblue-fields').dbFields;
+const dbFields = require('./constants/airtable-fields').dbFields;
 
 const updateContacts = async () => {
   const timeDateStarted = moment();
@@ -24,13 +24,7 @@ const updateContacts = async () => {
   let countUpdatedRecs = 0;
   let countCreatedRecs = 0;
 
-  try {
-    const groups = await getGroups();
-    console.log('GROUPS', groups);
-  } catch (error) {
-    console.log('Get groups error:', error);
-  }
-
+  const groups = await getGroups();
 
   // go thru every email
   emailsTable.select({
