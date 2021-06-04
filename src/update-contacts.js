@@ -134,7 +134,7 @@ const updateContacts = async () => {
                 const updateContact = getSibObject('update', contactFields);
 
                 // UPDATE CONTACT
-                // await contactsApi.updateContact(email, updateContact); // nothing returned
+                await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
                 console.log('Updated #', countUpdatedRecs, email, contactFields);
               } catch (err) {
@@ -158,7 +158,7 @@ const updateContacts = async () => {
                 const createContact = getSibObject('create', contactFields);
 
                 // CREATE CONTACT
-                // await contactsApi.createContact(createContact);
+                await contactsApi.createContact(createContact);
                 countCreatedRecs++;
                 console.log('Created #', countCreatedRecs, email, contactFields);
               } catch (err) {

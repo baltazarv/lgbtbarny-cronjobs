@@ -53850,7 +53850,7 @@ const updateContacts = async () => {
                 const updateContact = getSibObject('update', contactFields);
 
                 // UPDATE CONTACT
-                // await contactsApi.updateContact(email, updateContact); // nothing returned
+                await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
                 console.log('Updated #', countUpdatedRecs, email, contactFields);
               } catch (err) {
@@ -53874,7 +53874,7 @@ const updateContacts = async () => {
                 const createContact = getSibObject('create', contactFields);
 
                 // CREATE CONTACT
-                // await contactsApi.createContact(createContact);
+                await contactsApi.createContact(createContact);
                 countCreatedRecs++;
                 console.log('Created #', countCreatedRecs, email, contactFields);
               } catch (err) {
@@ -53892,7 +53892,9 @@ const updateContacts = async () => {
         console.log('Total records:', totalRecords);
         console.log('Updated records:', countUpdatedRecs);
         console.log('Created records:', countCreatedRecs);
-        console.log('Start:', timeDateStarted, ': End', moment(), ': Diff', timeDateStarted.diff(moment(), 'minutes'));
+        // time stats
+        const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
+        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
       }
     )
 }
