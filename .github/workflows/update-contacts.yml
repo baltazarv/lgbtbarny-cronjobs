@@ -1,7 +1,11 @@
 name: Update Contacts
 
-# on: [push]
-on: [push, workflow_dispatch]
+# on: [push, workflow_dispatch]
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '27 3 * * *'
+  workflow_dispatch:
 
 jobs:
   update-contacts:
@@ -28,5 +32,4 @@ jobs:
           AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
           AIRTABLE_MEMBERS_BASE_ID: ${{ secrets.AIRTABLE_MEMBERS_BASE_ID }}
           SIB_API_KEY: ${{ secrets.SIB_API_KEY }}
-          TEST: ${{ secrets.TEST }}
         uses: ./

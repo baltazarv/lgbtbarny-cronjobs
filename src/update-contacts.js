@@ -1,3 +1,5 @@
+// TODO: write updated, created, and all contacts to logs file
+
 const moment = require('moment');
 
 const sibUtils = require('./libs/sendinblue');
@@ -113,7 +115,7 @@ const updateContacts = async () => {
               contactFields.listIds.push(sibLists.law_notes.id);
             }
 
-            console.log('contactFields', contactFields);
+            // console.log('contactFields', contactFields);
 
           } else {
             console.log(`No member record for ${email}`);
@@ -135,7 +137,7 @@ const updateContacts = async () => {
                 // UPDATE CONTACT
                 await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
-                console.log('Updated #', countUpdatedRecs, email, contactFields);
+                console.log('Updated #', countUpdatedRecs, email); // , contactFields
               } catch (err) {
                 console.log('updateContact error', err);
               }
@@ -159,7 +161,7 @@ const updateContacts = async () => {
                 // CREATE CONTACT
                 await contactsApi.createContact(createContact);
                 countCreatedRecs++;
-                console.log('Created #', countCreatedRecs, email, contactFields);
+                console.log('Created #', countCreatedRecs, email); // , contactFields
               } catch (err) {
                 console.log('createContact error', err);
               }
@@ -177,7 +179,7 @@ const updateContacts = async () => {
         console.log('Created records:', countCreatedRecs);
         // time stats
         const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
-        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
+        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', moment().diff(timeDateStarted, 'minutes'), 'minutes');
       }
     )
 }

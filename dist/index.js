@@ -53714,6 +53714,8 @@ module.exports = require("zlib");;
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+// TODO: write updated, created, and all contacts to logs file
+
 const moment = __nccwpck_require__(9623);
 
 const sibUtils = __nccwpck_require__(3869);
@@ -53851,7 +53853,7 @@ const updateContacts = async () => {
                 // UPDATE CONTACT
                 await contactsApi.updateContact(email, updateContact); // nothing returned
                 countUpdatedRecs++;
-                console.log('Updated #', countUpdatedRecs, email, contactFields);
+                console.log('Updated #', countUpdatedRecs, email); // , contactFields
               } catch (err) {
                 console.log('updateContact error', err);
               }
@@ -53875,7 +53877,7 @@ const updateContacts = async () => {
                 // CREATE CONTACT
                 await contactsApi.createContact(createContact);
                 countCreatedRecs++;
-                console.log('Created #', countCreatedRecs, email, contactFields);
+                console.log('Created #', countCreatedRecs, email); // , contactFields
               } catch (err) {
                 console.log('createContact error', err);
               }
@@ -53893,7 +53895,7 @@ const updateContacts = async () => {
         console.log('Created records:', countCreatedRecs);
         // time stats
         const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
-        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
+        console.log('Start:', timeDateStarted.format(timeFormat), ': End', timeFormat.format(moment()), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
       }
     )
 }
