@@ -53831,7 +53831,7 @@ const updateContacts = async () => {
               contactFields.listIds.push(sibLists.law_notes.id);
             }
 
-            console.log('contactFields', contactFields);
+            // console.log('contactFields', contactFields);
 
           } else {
             console.log(`No member record for ${email}`);
@@ -53895,7 +53895,7 @@ const updateContacts = async () => {
         console.log('Created records:', countCreatedRecs);
         // time stats
         const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
-        console.log('Start:', timeDateStarted.format(timeFormat), ': End', timeFormat.format(moment()), ': Diff', timeDateStarted.diff(moment(), 'minutes'), 'minutes');
+        console.log('Start:', timeDateStarted.format(timeFormat), ': End', moment().format(timeFormat), ': Diff', moment().diff(timeDateStarted, 'minutes'), 'minutes');
       }
     )
 }
