@@ -1,4 +1,7 @@
-// TODO: write updated, created, and all contacts to logs file
+// TODO: write updated, created, and all contacts to logs file?
+
+// // TODO: use .env for development (vs passing vars in front of terminal command)?
+// require('dotenv').config({ path: __dirname + "../.env.development" });
 
 const moment = require('moment');
 
@@ -30,14 +33,17 @@ const updateContacts = async () => {
 
   // go thru every email
   emailsTable.select({
+    // // test options:
     // maxRecords: 100,
+    // filterByFormula: `SEARCH(RECORD_ID(), "rec2sTp9rVwhbfaQY")`,
+    // view: '_test',
     // filterByFormula: `SEARCH(RECORD_ID(), "recOcgZwaaKnkan8x,recvSCl4IpLMw3rOr")`,
   })
     .eachPage(
       async function page(emailRecs, fetchNextPage) {
         for (let i = 0; i < emailRecs.length; i++) {
           const emailRecord = getMinifiedRecord(emailRecs[i]);
-          const email = emailRecord.fields.address;
+          const email = emailRecord.fields[dbFields.emails.address];
 
           totalRecords++;
 
@@ -47,12 +53,15 @@ const updateContacts = async () => {
           }).firstPage();
 
           let contactFields = null;
+          // find Sendinblue contact
+          let contactsApi = new sibContactsApi();
 
           // there should only be one user, but if more will only get first record
           if (userRecs && userRecs.length > 0) {
             const user = getMinifiedRecord(userRecs[0]);
+            // console.log('user', user)
             contactFields = {};
-            contactFields.attributes = contactFields.attributes || {};
+            contactFields.attributes = {};
 
             // add first and last name to email update/create object
             if (user.fields[dbFields.members.firstName]) {
@@ -61,14 +70,23 @@ const updateContacts = async () => {
             if (user.fields[dbFields.members.lastName]) {
               contactFields.attributes[sibFields.contacts.attributes.lastname] = user.fields[dbFields.members.lastName];
             }
+
             // add firm/org
             if (user.fields[dbFields.members.employer]) {
               contactFields.attributes[sibFields.contacts.attributes.firmOrg] = user.fields[dbFields.members.employer];
+            } else {
+              // if user removed
+              contactFields.attributes[sibFields.contacts.attributes.firmOrg] = '';
             }
+
             // add practice setting
             if (user.fields[dbFields.members.practiceSetting]) {
               contactFields.attributes[sibFields.contacts.attributes.practice] = user.fields[dbFields.members.practiceSetting];
+            } else {
+              // if user removed
+              contactFields.attributes[sibFields.contacts.attributes.practice] = '';
             }
+
             // add group interests
             if (user.fields[dbFields.members.interestGroups]) {
               const groupIds = user.fields[dbFields.members.interestGroups];
@@ -77,6 +95,9 @@ const updateContacts = async () => {
                 return groupFound.fields.name;
               })
               contactFields.attributes[sibFields.contacts.attributes.groups] = userGroups.join(', ');
+            } else {
+              // if user removed
+              contactFields.attributes[sibFields.contacts.attributes.groups] = '';
             }
 
             // using Airtable _status field (calculate using payments instead?)
@@ -97,82 +118,125 @@ const updateContacts = async () => {
             const gradDate = user.fields[dbFields.members.gradDate];
             if (gradDate) {
               const gradDateFormatted = moment(gradDate).format('YYYY-MM-DD');
-              contactFields.attributes = contactFields.attributes || {};
               contactFields.attributes[sibFields.contacts.attributes.gradDate] = gradDateFormatted;
             } else {
               contactFields.attributes[sibFields.contacts.attributes.gradDate] = '';
             }
 
-            // if user is active, add to members-only lists
-            if (status === 'attorney' || status === 'student') {
-              contactFields.listIds = contactFields.listIds || [];
-              contactFields.listIds.push(sibLists.members.id);
-              contactFields.listIds.push(sibLists.law_notes.id);
+            // add Law Notes subscription expiration date
+            const lnExpDate = user.fields[dbFields.members.lnExpDate];
+            if (lnExpDate) {
+              const lnExpDateFormatted = moment(lnExpDate).format('YYYY-MM-DD');
+              contactFields.attributes[sibFields.contacts.attributes.lnExpDate] = lnExpDateFormatted;
+            } else {
+              contactFields.attributes[sibFields.contacts.attributes.lnExpDate] = '';
             }
 
-            if (status === 'subscribed') {
-              contactFields.listIds = contactFields.listIds || [];
-              contactFields.listIds.push(sibLists.law_notes.id);
+            // mailing lists
+            // ... not changing Newsletter subscription since SendinBlue is source of truth
+
+            // add to mailing lists (listIds)
+            contactFields.listIds = []
+            contactFields.unlinkListIds = []
+
+            // if user is active and member has not unsubscribed from those mailings, add to members-only lists
+            if (
+              status === 'attorney' ||
+              status === 'student' ||
+              status === 'subscribed'
+            ) {
+              // Members mailing list
+              if (status === 'subscribed') {
+                // if subscriber previously a member
+                contactFields.unlinkListIds = [sibLists.members.id];
+              } else {
+                if (user.fields?.[dbFields.members.listsUnsubscribed]?.find((list) => list === dbFields.members.listMembers)) {
+                  // if user removed themselves from Members mailing
+                  contactFields.unlinkListIds.push(sibLists.members.id);
+                } else {
+                  contactFields.listIds.push(sibLists.members.id);
+                }
+              }
+
+              // Law Notes mailing list
+              if (user.fields?.[dbFields.members.listsUnsubscribed]?.find((list) => list === dbFields.members.listLawNotes)) {
+                // if user removed themselves from Law Notes mailing
+                contactFields.unlinkListIds.push(sibLists.law_notes.id);
+              } else {
+                contactFields.listIds.push(sibLists.law_notes.id);
+              }
             }
 
-            // console.log('contactFields', contactFields);
+            if (
+              status === 'expired' ||
+              status === 'graduated' ||
+              status === 'not subscribed'
+            ) {
+              contactFields.unlinkListIds = [
+                sibLists.members.id,
+                sibLists.law_notes.id
+              ]
+            }
+
+            // if no items added
+            if (contactFields.listIds.length === 0) {
+              delete contactFields.listIds
+            }
+            if (contactFields.unlinkListIds.length === 0) {
+              delete contactFields.unlinkListIds
+            }
 
           } else {
             console.log(`No member record for ${email}`);
           }
 
-          // find Sendinblue contact
-          let contactsApi = new sibContactsApi();
-          try {
-            const contact = await contactsApi.getContactInfo(email);
-            // console.log('update contact', contact)
+          // if something to update
+          if (contactFields) {
+            try {
+              // not checking that email is verified before updating
+              contactsApi = new sibContactsApi();
+              const updateContact = getSibObject('update', contactFields);
 
-            // if found & if something to update
-            if (contactFields) {
-              try {
-                // not checking that email is verified before updating
-                contactsApi = new sibContactsApi();
-                const updateContact = getSibObject('update', contactFields);
+              // console.log('updateContact', {
+              //   contactFields,
+              //   updateContact,
+              // })
 
-                // UPDATE CONTACT
-                await contactsApi.updateContact(email, updateContact); // nothing returned
-                countUpdatedRecs++;
-                console.log('Updated #', countUpdatedRecs, email); // , contactFields
-              } catch (err) {
-                console.log('updateContact error', err);
-              }
-            }
-          } catch (err) {
-            // if contact not found, 404 error, create contact
-            // create contact if it doesn't exist
-            if (err.status === 404) {
-              // console.log('create contact', email, 'err', err.status);
+              // UPDATE CONTACT
+              await contactsApi.updateContact(email, updateContact); // nothing returned
+              countUpdatedRecs++;
+              // console.log('Updated #', countUpdatedRecs, email);
+            } catch (err) {
+              // if contact not found, 404 error, create contact
+              if (err.status === 404) {
 
-              try {
-                contactFields = contactFields || {};
-                contactFields.listIds = contactFields.listIds || [];
-                // add to newsletter if new contact
-                // TODO: reasses if should add to newsletter
-                contactFields.listIds.push(sibLists.newsletter.id);
+                try {
+                  contactFields = contactFields || {};
+                  contactFields.listIds = contactFields.listIds || [];
+                  // add to newsletter if new contact
+                  contactFields.listIds.push(sibLists.newsletter.id);
 
-                contactFields.email = email;
-                const createContact = getSibObject('create', contactFields);
+                  contactFields.email = email;
+                  const createContact = getSibObject('create', contactFields);
 
-                // CREATE CONTACT
-                await contactsApi.createContact(createContact);
-                countCreatedRecs++;
-                console.log('Created #', countCreatedRecs, email); // , contactFields
-              } catch (err) {
-                console.log('createContact error', err);
+                  // CREATE CONTACT
+                  await contactsApi.createContact(createContact);
+                  countCreatedRecs++;
+                  console.log('Created #', countCreatedRecs, email); // , contactFields
+                } catch (err) {
+                  console.log('createContact', {
+                    error: err?.response?.body,
+                    status: err.status,
+                  });
+                }
               }
             }
           }
         }
 
-        // setTimeout(fetchNextPage, 1000);
         fetchNextPage();
       },
-      function done(err) {
+      done = (err) => {
         if (err) console.log('Airtable error', err);
         console.log('Total records:', totalRecords);
         console.log('Updated records:', countUpdatedRecs);
@@ -188,11 +252,17 @@ const getSibObject = (type, contactFields) => {
   let sibObject = null;
   if (type === 'update') {
     sibObject = new sibUpdateContact();
+
+    // unlink list only if updating contact
+    if (contactFields.unlinkListIds) sibObject.unlinkListIds = contactFields.unlinkListIds;
+
   } else if (type === 'create') {
     sibObject = new sibCreateContact();
     // always need to pass email to create contact
     sibObject.email = contactFields.email;
   }
+
+  // all fields that need to be updated must be added to contactFields
   if (contactFields.listIds) sibObject.listIds = contactFields.listIds;
   if (contactFields.attributes) sibObject.attributes = contactFields.attributes;
   return sibObject;
