@@ -9,10 +9,10 @@ exports.dbFields = {
     employer: 'employer',
     practiceSetting: 'practice_setting',
     interestGroups: 'interest_groups',
-    listsUnsubscribed: 'lists_unsubscribed',
+    listsUnsubscribed: 'exclude_mailings',
     // TODO: change values to match SendinBlue
-    listMembers: 'members',
-    listLawNotes: 'law_notes',
+    listMembers: 'Members',
+    listLawNotes: 'Law Notes',
 
     // calc
     status: "_status",
