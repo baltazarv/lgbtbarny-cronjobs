@@ -24,5 +24,6 @@ exports.dbFields = {
   // members base: emails table
   emails: {
     address: 'address',
+    verified: 'verified',
   },
 };

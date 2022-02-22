@@ -11,7 +11,7 @@ The `update-contacts` script is a script to update SendinBlue contacts from Airt
 
 2) Find associated users from `members` table.
 
-3) Create a SendinBlue contact field object with the following fields from Airtable (SendinBlue attributes in parenthesis):
+3) Create a SendinBlue contact field object with the following fields from Airtable (SendinBlue attributes in parenthesis) - only for verified emails:
 
    - first name (`FIRSTNAME`)
    - last name (`LASTNAME`)
